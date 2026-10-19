@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OdontoQuiz Pro | Cariologia: Mitos &amp; Verdades sobre Cáries</title>
+
+    <!-- Google Fonts: Poppins e Quicksand -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet" />
+
+    <!-- FontAwesome Icons via CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <!-- TailwindCSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        odonto: {
+                            ice: '#EEF6FF',
+                            soft: '#F4F9F9',
+                            primary: '#0077B6',
+                            deep: '#023E8A',
+                            cyan: '#00B4D8',
+                            light: '#CAF0F8',
+                            mint: '#1F9D8B',
+                            coral: '#E76F51',
+                            dark: '#1E2538'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                        display: ['Quicksand', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+
+    <!-- Estilos Customizados -->
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="antialiased selection:bg-odonto-cyan selection:text-white flex flex-col justify-between min-h-screen py-5 px-4 sm:px-6 lg:px-8">
+
+    <!-- Luzes e Bolhas Decorativas de Fundo -->
+    <div class="bg-bubble bg-bubble-1" aria-hidden="true"></div>
+    <div class="bg-bubble bg-bubble-2" aria-hidden="true"></div>
+    <div class="bg-bubble bg-bubble-3" aria-hidden="true"></div>
+
+    <!-- Canvas para Confetes de Comemoração -->
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <!-- Container Principal -->
+    <div class="relative z-10 w-full max-w-3xl mx-auto my-auto flex flex-col gap-5 py-2">
+
+        <!-- ==================================================================
+             CABEÇALHO BENTO (Mascote Dinâmico + Título + Streak & Placar)
+             ================================================================== -->
+        <header class="glass-panel rounded-3xl px-5 py-4 sm:px-7 sm:py-5 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <!-- Mascote Dentinho Dinâmico (Muda de expressão via JS) -->
+                <button
+                    type="button"
+                    onclick="showStartScreen()"
+                    title="Voltar ao Menu Inicial"
+                    class="tooth-mascot w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-odonto-primary via-odonto-cyan to-odonto-mint flex items-center justify-center p-2.5 shrink-0 shadow-md focus:outline-none"
+                >
+                    <svg id="mascot-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full" aria-label="Mascote Dente">
+                        <!-- Corpo Anatômico do Molar -->
+                        <path d="M18 11C11 11 7.5 16.8 7.5 24C7.5 32.2 12 39 14.2 48C15.7 54.2 17.8 56.5 21.3 56.5C24.8 56.5 26.5 46 32 46C37.5 46 39.2 56.5 42.7 56.5C46.2 56.5 48.3 54.2 49.8 48C52 39 56.5 32.2 56.5 24C56.5 16.8 53 11 46 11C40.5 11 36.5 14.2 32 14.2C27.5 14.2 23.5 11 18 11Z" fill="white"/>
+                        <!-- Brilho do Esmalte -->
+                        <path d="M15 18C13.5 20.5 13 23.5 13.5 26.5" stroke="#CAF0F8" stroke-width="2.5" stroke-linecap="round"/>
+                        <!-- Expressão Facial (Atualizada dinamicamente) -->
+                        <g id="mascot-face">
+                            <path d="M20.5 25.5C20.5 24 21.8 23 23 23C24.2 23 25.5 24 25.5 25.5" stroke="#1E2538" stroke-width="3" stroke-linecap="round"/>
+                            <path d="M38.5 25.5C38.5 24 39.8 23 41 23C42.2 23 43.5 24 43.5 25.5" stroke="#1E2538" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="18.5" cy="29.5" r="2.5" fill="#FF9EAA"/>
+                            <circle cx="45.5" cy="29.5" r="2.5" fill="#FF9EAA"/>
+                            <path d="M26 30.5C27.5 34.2 36.5 34.2 38 30.5" stroke="#1E2538" stroke-width="3" stroke-linecap="round"/>
+                        </g>
+                        <!-- Estrelinha de Limpeza -->
+                        <path d="M51 6L52.5 9.5L56 11L52.5 12.5L51 16L49.5 12.5L46 11L49.5 9.5L51 6Z" fill="#CAF0F8"/>
+                    </svg>
+                </button>
+
+                <div>
+                    <div class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-odonto-primary bg-odonto-light/70 px-3 py-0.5 rounded-full mb-1">
+                        <i class="fa-solid fa-microscope text-[10px]"></i>
+                        <span>Cariologia &amp; Saúde Bucal</span>
+                    </div>
+                    <h1 class="font-display text-xl sm:text-2xl md:text-3xl font-bold text-odonto-dark leading-tight">
+                        OdontoQuiz <span class="text-transparent bg-clip-text bg-gradient-to-r from-odonto-primary to-odonto-mint">Pro</span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Indicadores do Jogo (Visíveis durante a partida) -->
+            <div id="header-stats" class="flex items-center gap-2.5 sm:gap-3 ml-auto">
+                <!-- Sequência (Streak) -->
+                <div id="streak-badge" class="hidden sm:flex items-center gap-2 bg-amber-50/90 border border-amber-200/80 px-3.5 py-2 rounded-2xl shadow-sm" title="Sequência de acertos consecutivos">
+                    <span class="text-amber-500 text-base"><i class="fa-solid fa-fire-flame-curved"></i></span>
+                    <div class="text-left">
+                        <p class="text-[10px] font-bold uppercase tracking-wider text-amber-700/70 leading-none mb-0.5">Combo</p>
+                        <p class="text-sm font-bold text-amber-900 leading-none"><span id="current-streak">0</span>x</p>
+                    </div>
+                </div>
+
+                <!-- Placar de Pontos -->
+                <div id="header-score-badge" class="flex items-center gap-2.5 bg-white/95 border border-odonto-light px-3.5 py-2 rounded-2xl shadow-sm">
+                    <div class="w-8 h-8 rounded-xl bg-odonto-ice flex items-center justify-center text-odonto-primary">
+                        <i class="fa-solid fa-star text-sm"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 leading-none mb-0.5">Acertos</p>
+                        <p class="text-sm sm:text-base font-bold text-odonto-dark leading-none">
+                            <span id="current-score">0</span>
+                            <span class="text-xs font-normal text-slate-400">/ <span id="total-questions-badge">18</span></span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Botão Trocar Modo / Menu -->
+                <button
+                    id="btn-menu-top"
+                    type="button"
+                    onclick="showStartScreen()"
+                    class="w-10 h-10 rounded-2xl bg-white/90 hover:bg-white border border-slate-200/80 text-slate-600 hover:text-odonto-primary flex items-center justify-center shadow-sm transition"
+                    title="Escolher Modo / Reiniciar"
+                    aria-label="Voltar para seleção de modo"
+                >
+                    <i class="fa-solid fa-sliders text-sm"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- ==================================================================
+             TELA 1: BOAS-VINDAS & SELEÇÃO DE MODO DE JOGO
+             ================================================================== -->
+        <section id="start-screen" class="glass-panel rounded-3xl p-6 sm:p-9 animate-fade-slide">
+            <div class="text-center max-w-xl mx-auto mb-7">
+                <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-odonto-mint bg-emerald-50 border border-emerald-200 px-3.5 py-1 rounded-full mb-3">
+                    <i class="fa-solid fa-circle-check"></i>
+                    18 Casos &amp; Afirmações Baseadas em Evidências
+                </span>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-odonto-dark mb-2.5">
+                    Desvende os Mitos e a Ciência das Cáries
+                </h2>
+                <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+                    Dos mitos populares do dia a dia até mecanismos bioquímicos como <strong>pH crítico (5,5)</strong>, <strong>Curva de Stephan</strong>, <strong>lesão de mancha branca</strong> e <strong>fluorapatita</strong>. Escolha seu modo de jogo:
+                </p>
+            </div>
+
+            <!-- Cards de Seleção de Modo -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <!-- Modo 1: Trilha Completa (18 questões) -->
+                <button
+                    type="button"
+                    onclick="selectGameMode('all')"
+                    id="mode-btn-all"
+                    class="glass-panel-interactive mode-card-active text-left p-5 rounded-2xl flex flex-col justify-between"
+                >
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="w-10 h-10 rounded-xl bg-odonto-primary/10 text-odonto-primary flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-layer-group"></i>
+                            </span>
+                            <span class="text-xs font-bold bg-odonto-ice text-odonto-primary px-2.5 py-1 rounded-lg border border-odonto-light">
+                                18 Questões
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-base text-odonto-dark mb-1">Trilha Completa</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Vai do nível essencial aos casos clínicos avançados de Cariologia, histopatologia e bioquímica salivar.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-odonto-primary">
+                        <span>Progressivo (Fácil → Difícil)</span>
+                        <i class="fa-solid fa-circle-check text-sm"></i>
+                    </div>
+                </button>
+
+                <!-- Modo 2: Desafio Clínico & Bioquímico (Apenas Intermediárias e Avançadas) -->
+                <button
+                    type="button"
+                    onclick="selectGameMode('clinical')"
+                    id="mode-btn-clinical"
+                    class="glass-panel-interactive text-left p-5 rounded-2xl flex flex-col justify-between"
+                >
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-dna"></i>
+                            </span>
+                            <span class="text-xs font-bold bg-purple-50 text-purple-700 px-2.5 py-1 rounded-lg border border-purple-200">
+                                11 Questões
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-base text-odonto-dark mb-1">Desafio Clínico</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Apenas questões de nível Intermediário e Avançado: desmineralização, sacarose, biofilme, erosão vs. cárie e clínica.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-purple-700">
+                        <span>Alta Complexidade</span>
+                        <i class="fa-solid fa-bolt text-sm"></i>
+                    </div>
+                </button>
+
+                <!-- Modo 3: Rodada Rápida (10 Sorteadas) -->
+                <button
+                    type="button"
+                    onclick="selectGameMode('quick')"
+                    id="mode-btn-quick"
+                    class="glass-panel-interactive text-left p-5 rounded-2xl flex flex-col justify-between"
+                >
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="w-10 h-10 rounded-xl bg-emerald-100 text-odonto-mint flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-shuffle"></i>
+                            </span>
+                            <span class="text-xs font-bold bg-emerald-50 text-odonto-mint px-2.5 py-1 rounded-lg border border-emerald-200">
+                                10 Sorteadas
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-base text-odonto-dark mb-1">Rodada Rápida</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Sorteia 10 perguntas variadas (entre mitos populares e ciência clínica) para uma apresentação dinâmica.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-odonto-mint">
+                        <span>Ordem Aleatória</span>
+                        <i class="fa-solid fa-dice text-sm"></i>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Botão Iniciar Jogo -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/80 border border-odonto-light rounded-2xl p-4 sm:px-6">
+                <div class="flex items-center gap-3 text-left">
+                    <div class="w-10 h-10 rounded-xl bg-odonto-ice text-odonto-primary flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs sm:text-sm font-bold text-odonto-dark">Feedback Científico + Nota Clínica</p>
+                        <p class="text-xs text-slate-500">Cada resposta revela a explicação completa e o mecanismo odontológico por trás.</p>
+                    </div>
+                </div>
+
+                <button
+                    type="button"
+                    onclick="startSelectedQuiz()"
+                    class="btn-primary-odonto w-full sm:w-auto rounded-2xl py-3.5 px-8 font-semibold text-base flex items-center justify-center gap-3 shrink-0"
+                >
+                    <span>Começar Agora</span>
+                    <i class="fa-solid fa-play text-sm"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================================================================
+             TELA 2: ÁREA DO JOGO (PERGUNTAS, BOTÕES E FEEDBACK CIENTÍFICO)
+             ================================================================== -->
+        <main id="quiz-screen" class="hidden glass-panel rounded-3xl p-6 sm:p-9 transition-all duration-300">
+
+            <!-- Topo: Contador, Stepper de Bolinhas e Porcentagem -->
+            <div class="mb-6">
+                <div class="flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm font-medium text-slate-500 mb-3">
+                    <span id="question-counter" class="inline-flex items-center gap-2 font-bold text-odonto-primary">
+                        <i class="fa-regular fa-circle-question"></i>
+                        Pergunta 1 de 18
+                    </span>
+
+                    <!-- Stepper Visual (Bolinhas de progresso das questões) -->
+                    <div id="stepper-dots" class="flex items-center gap-1.5 flex-wrap justify-center" aria-label="Progresso das questões">
+                        <!-- Gerado dinamicamente pelo JS -->
+                    </div>
+
+                    <span id="progress-percentage" class="text-slate-400 font-semibold text-xs">6% concluído</span>
+                </div>
+
+                <!-- Barra de Progresso Contínua -->
+                <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200/60">
+                    <div id="progress-bar" class="h-full bg-gradient-to-r from-odonto-primary via-odonto-cyan to-odonto-mint transition-all duration-500 rounded-full" style="width: 6%;"></div>
+                </div>
+            </div>
+
+            <!-- Card Central com a Afirmação -->
+            <section id="question-card" class="statement-card rounded-2xl p-6 sm:p-8 mb-6 overflow-hidden">
+                <!-- Marca d'água decorativa -->
+                <i class="fa-solid fa-tooth absolute -bottom-5 -right-3 text-8xl text-odonto-primary/[0.04] pointer-events-none select-none" aria-hidden="true"></i>
+
+                <!-- Cabeçalho do Card: Especialidade + Nível de Complexidade -->
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-5">
+                    <span id="question-category" class="inline-flex items-center gap-1.5 text-xs font-semibold text-odonto-primary bg-odonto-ice border border-odonto-light px-3 py-1 rounded-lg">
+                        <i class="fa-solid fa-tooth"></i>
+                        Cariologia &amp; Biofilme
+                    </span>
+
+                    <span id="question-difficulty" class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-lg badge-easy">
+                        <i class="fa-solid fa-signal text-[10px]"></i>
+                        Nível Essencial
+                    </span>
+                </div>
+
+                <!-- Afirmação Central -->
+                <div class="relative z-10">
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">
+                        Julgue a afirmação abaixo como Verdadeira ou Falsa:
+                    </p>
+                    <blockquote id="question-text" class="text-lg sm:text-2xl font-semibold text-odonto-dark leading-relaxed">
+                        "O açúcar é o único causador das cáries."
+                    </blockquote>
+                </div>
+            </section>
+
+            <!-- Dois Botões Grandes Táteis: "Verdadeiro" e "Falso" -->
+            <div id="answer-buttons-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <button
+                    id="btn-true"
+                    type="button"
+                    onclick="handleAnswer(true)"
+                    class="btn-answer btn-true rounded-2xl py-4 px-6 font-semibold text-base sm:text-lg flex items-center justify-between focus:outline-none focus:ring-4 focus:ring-odonto-mint/40"
+                    aria-label="Responder Verdadeiro"
+                >
+                    <div class="flex items-center gap-3">
+                        <span class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-white shadow-inner">
+                            <i class="fa-solid fa-check text-lg"></i>
+                        </span>
+                        <span>Verdadeiro</span>
+                    </div>
+                    <kbd class="hidden sm:inline-block text-[11px] font-semibold bg-black/15 text-white/90 px-2.5 py-1 rounded-lg">
+                        Tecla V
+                    </kbd>
+                </button>
+
+                <button
+                    id="btn-false"
+                    type="button"
+                    onclick="handleAnswer(false)"
+                    class="btn-answer btn-false rounded-2xl py-4 px-6 font-semibold text-base sm:text-lg flex items-center justify-between focus:outline-none focus:ring-4 focus:ring-odonto-coral/40"
+                    aria-label="Responder Falso"
+                >
+                    <div class="flex items-center gap-3">
+                        <span class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-white shadow-inner">
+                            <i class="fa-solid fa-xmark text-lg"></i>
+                        </span>
+                        <span>Falso</span>
+                    </div>
+                    <kbd class="hidden sm:inline-block text-[11px] font-semibold bg-black/15 text-white/90 px-2.5 py-1 rounded-lg">
+                        Tecla F
+                    </kbd>
+                </button>
+            </div>
+
+            <!-- Área de Feedback Educativo & Clínico (Revelada ao responder) -->
+            <div id="feedback-container" class="hidden mt-6">
+                <div id="feedback-box" class="rounded-2xl p-5 sm:p-6 transition-all duration-300 shadow-sm">
+                    <div class="flex items-start gap-4">
+                        <!-- Ícone de Acertou / Errou -->
+                        <div id="feedback-icon-wrapper" class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 text-white text-xl shadow-sm mt-0.5">
+                            <i id="feedback-icon" class="fa-solid fa-check"></i>
+                        </div>
+
+                        <div class="flex-1">
+                            <!-- Cabeçalho do Feedback -->
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                <h2 id="feedback-title" class="text-base sm:text-lg font-bold">
+                                    Excelente! Você acertou!
+                                </h2>
+                                <span id="correct-answer-pill" class="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-lg">
+                                    Gabarito: Falso
+                                </span>
+                            </div>
+
+                            <!-- Explicação Principal -->
+                            <p id="feedback-explanation" class="text-sm sm:text-base text-odonto-dark/90 leading-relaxed mb-4">
+                                Explicação detalhada sobre o mito ou verdade odontológica.
+                            </p>
+
+                            <!-- Pílula de Aprofundamento Clínico / Bioquímico -->
+                            <div class="bg-white/85 border border-slate-200/80 rounded-xl p-3.5 flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-odonto-ice text-odonto-primary flex items-center justify-center shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-flask-vial text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[11px] font-bold uppercase tracking-wider text-odonto-primary mb-0.5">
+                                        Visão Clínica &amp; Científica
+                                    </p>
+                                    <p id="feedback-clinical-tip" class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                        Nota clínica complementar sobre o mecanismo cariogênico.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botão "Próxima Pergunta" -->
+                <div class="mt-5 flex items-center justify-between gap-4">
+                    <span class="text-xs text-slate-400 hidden sm:inline-flex items-center gap-1.5">
+                        <i class="fa-regular fa-keyboard"></i>
+                        Pressione <strong>Enter</strong> ou <strong>Espaço</strong> para continuar
+                    </span>
+                    <button
+                        id="btn-next"
+                        type="button"
+                        onclick="nextQuestion()"
+                        class="btn-primary-odonto w-full sm:w-auto ml-auto rounded-2xl py-3.5 px-7 font-semibold text-base flex items-center justify-center gap-2.5 focus:outline-none focus:ring-4 focus:ring-odonto-cyan/40"
+                    >
+                        <span id="btn-next-label">Próxima Pergunta</span>
+                        <i id="btn-next-icon" class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- ==================================================================
+             TELA 3: RESULTADOS FINAIS & RELATÓRIO DE DESEMPENHO
+             ================================================================== -->
+        <section id="result-screen" class="hidden glass-panel rounded-3xl p-6 sm:p-10 text-center">
+
+            <!-- Anel Circular de Desempenho -->
+            <div class="relative w-36 h-36 mx-auto mb-5 flex items-center justify-center">
+                <svg class="w-full h-full" viewBox="0 0 120 120">
+                    <circle cx="60" cy="60" r="52" fill="none" stroke="#E2E8F0" stroke-width="10" />
+                    <circle
+                        id="result-score-circle"
+                        class="score-ring-circle"
+                        cx="60"
+                        cy="60"
+                        r="52"
+                        fill="none"
+                        stroke="url(#odontoGradient)"
+                        stroke-width="10"
+                        stroke-linecap="round"
+                        stroke-dasharray="326.72"
+                        stroke-dashoffset="326.72"
+                    />
+                    <defs>
+                        <linearGradient id="odontoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#0077B6" />
+                            <stop offset="100%" stop-color="#1F9D8B" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span id="result-emoji" class="text-3xl mb-0.5" aria-hidden="true">🦷✨</span>
+                    <p class="text-2xl font-bold text-odonto-dark leading-none">
+                        <span id="final-score">0</span><span class="text-base font-normal text-slate-400">/<span id="final-total">18</span></span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Badge de Classificação -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-odonto-ice border border-odonto-light text-odonto-primary text-xs sm:text-sm font-semibold mb-2.5">
+                <i class="fa-solid fa-award"></i>
+                <span id="result-badge-text">Diagnóstico de Conhecimento</span>
+            </div>
+
+            <!-- Título e Mensagem de Incentivo -->
+            <h2 id="result-title" class="font-display text-2xl sm:text-3xl font-bold text-odonto-dark mb-2.5">
+                Você é um mestre da escovação!
+            </h2>
+            <p id="result-message" class="text-sm sm:text-base text-slate-600 max-w-xl mx-auto leading-relaxed mb-6">
+                Parabéns pelo seu conhecimento sobre saúde bucal e cariologia!
+            </p>
+
+            <!-- Mini Bento Grid de Estatísticas da Partida -->
+            <div class="grid grid-cols-3 gap-3 mb-7 max-w-lg mx-auto">
+                <div class="bg-white/85 border border-slate-200/80 rounded-2xl p-3.5 shadow-sm">
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Precisão</p>
+                    <p id="stat-accuracy" class="text-xl sm:text-2xl font-bold text-odonto-primary">100%</p>
+                </div>
+                <div class="bg-white/85 border border-slate-200/80 rounded-2xl p-3.5 shadow-sm">
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Melhor Combo</p>
+                    <p id="stat-best-streak" class="text-xl sm:text-2xl font-bold text-amber-500">0x 🔥</p>
+                </div>
+                <div class="bg-white/85 border border-slate-200/80 rounded-2xl p-3.5 shadow-sm">
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Avançadas</p>
+                    <p id="stat-advanced-hits" class="text-xl sm:text-2xl font-bold text-odonto-mint">0/0</p>
+                </div>
+            </div>
+
+            <!-- Resumo Comentado com Filtro (Todas / Erros / Acertos) -->
+            <div class="text-left mb-8">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                        <i class="fa-solid fa-clipboard-check text-odonto-primary"></i>
+                        Gabarito Clínico Comentado
+                    </h3>
+                    <div class="inline-flex bg-slate-100 p-1 rounded-xl border border-slate-200/70 text-xs font-semibold">
+                        <button type="button" id="filter-all" onclick="filterReview('all')" class="px-3 py-1 rounded-lg bg-white text-odonto-primary shadow-sm transition">
+                            Todas
+                        </button>
+                        <button type="button" id="filter-wrong" onclick="filterReview('wrong')" class="px-3 py-1 rounded-lg text-slate-500 hover:text-odonto-dark transition">
+                            Erros
+                        </button>
+                        <button type="button" id="filter-correct" onclick="filterReview('correct')" class="px-3 py-1 rounded-lg text-slate-500 hover:text-odonto-dark transition">
+                            Acertos
+                        </button>
+                    </div>
+                </div>
+
+                <div id="review-list" class="space-y-3 max-h-80 overflow-y-auto pr-1.5 custom-scrollbar">
+                    <!-- Preenchido dinamicamente pelo JavaScript -->
+                </div>
+            </div>
+
+            <!-- Botões de Ação Final -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button
+                    type="button"
+                    onclick="restartCurrentMode()"
+                    class="btn-primary-odonto w-full sm:w-auto rounded-2xl py-4 px-8 font-semibold text-base inline-flex items-center justify-center gap-3"
+                >
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Jogar Novamente</span>
+                </button>
+
+                <button
+                    type="button"
+                    onclick="showStartScreen()"
+                    class="w-full sm:w-auto rounded-2xl py-4 px-6 font-semibold text-sm text-slate-600 bg-white hover:bg-slate-50 border border-slate-200 inline-flex items-center justify-center gap-2 transition shadow-sm"
+                >
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Trocar Modo de Jogo</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================================================================
+             RODAPÉ BENTO (Autor: Carlos Abritta + GitHub & Instagram)
+             ================================================================== -->
+        <footer class="footer-card rounded-3xl px-5 py-4 sm:px-7 sm:py-5 mt-1">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <!-- Identificação do Autor e Projeto -->
+                <div class="flex items-center gap-3.5 text-center sm:text-left flex-col sm:flex-row">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-odonto-primary via-odonto-cyan to-odonto-mint text-white flex items-center justify-center font-display font-bold text-base shadow-sm shrink-0">
+                        CA
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-center sm:justify-start gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-odonto-primary mb-0.5">
+                            <i class="fa-solid fa-tooth text-[10px]"></i>
+                            <span>OdontoQuiz Pro &bull; Cariologia &amp; Saúde Bucal</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-600">
+                            Desenvolvido por <strong class="font-bold text-odonto-dark">Carlos Abritta</strong>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Botões de Redes Sociais (GitHub & Instagram) -->
+                <div class="flex items-center gap-2.5 sm:gap-3">
+                    <a
+                        href="https://github.com/CarlosAbritta"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="social-btn social-btn-github rounded-2xl px-3.5 py-2 text-xs sm:text-sm font-semibold text-odonto-dark flex items-center gap-2.5 shadow-sm"
+                        aria-label="GitHub de Carlos Abritta"
+                    >
+                        <span class="social-icon-box w-7 h-7 rounded-xl bg-slate-100 text-odonto-dark flex items-center justify-center transition-colors">
+                            <i class="fa-brands fa-github text-base"></i>
+                        </span>
+                        <span>GitHub</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-60"></i>
+                    </a>
+
+                    <a
+                        href="https://www.instagram.com/carlos_eduardo_abritta/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="social-btn social-btn-instagram rounded-2xl px-3.5 py-2 text-xs sm:text-sm font-semibold text-odonto-dark flex items-center gap-2.5 shadow-sm"
+                        aria-label="Instagram de Carlos Abritta"
+                    >
+                        <span class="social-icon-box w-7 h-7 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center transition-colors">
+                            <i class="fa-brands fa-instagram text-base"></i>
+                        </span>
+                        <span>Instagram</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-60"></i>
+                    </a>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Script Principal -->
+    <script src="script.js"></script>
+</body>
+</html>

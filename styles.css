@@ -1,0 +1,415 @@
+/* ==========================================================================
+   OdontoQuiz Pro — Cariologia & Saúde Bucal
+   Design System Moderno: Bento UI, Glassmorphism & Micro-interações
+   ========================================================================== */
+
+:root {
+    --bg-ice: #EEF6FF;
+    --bg-secondary: #F4F9F9;
+    --primary-blue: #0077B6;
+    --primary-deep: #023E8A;
+    --primary-cyan: #00B4D8;
+    --primary-light: #CAF0F8;
+    --true-mint: #1F9D8B;
+    --true-mint-dark: #157366;
+    --true-mint-light: #E6F7F4;
+    --false-coral: #E76F51;
+    --false-coral-dark: #C85234;
+    --false-coral-light: #FDF0EC;
+    --text-dark: #1E2538;
+    --text-muted: #5A657D;
+    --card-bg: rgba(255, 255, 255, 0.86);
+    --card-border: rgba(255, 255, 255, 0.85);
+    --shadow-soft: 0 20px 50px -10px rgba(2, 62, 138, 0.09), 0 8px 20px -6px rgba(30, 37, 56, 0.04);
+    --shadow-elevated: 0 28px 65px -12px rgba(0, 119, 182, 0.16), 0 10px 25px -6px rgba(30, 37, 56, 0.06);
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-ice);
+    background-image:
+        radial-gradient(at 10% 10%, rgba(0, 180, 216, 0.16) 0px, transparent 50%),
+        radial-gradient(at 90% 15%, rgba(42, 157, 143, 0.14) 0px, transparent 50%),
+        radial-gradient(at 50% 90%, rgba(0, 119, 182, 0.12) 0px, transparent 55%),
+        radial-gradient(rgba(0, 119, 182, 0.06) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px;
+    color: var(--text-dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Bolhas de luz ambiente no fundo */
+.bg-bubble {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(60px);
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.6;
+    animation: floatBubble 16s ease-in-out infinite alternate;
+}
+
+.bg-bubble-1 {
+    width: 420px;
+    height: 420px;
+    background: rgba(0, 180, 216, 0.18);
+    top: -120px;
+    right: -100px;
+}
+
+.bg-bubble-2 {
+    width: 360px;
+    height: 360px;
+    background: rgba(42, 157, 143, 0.15);
+    bottom: -100px;
+    left: -90px;
+    animation-delay: -6s;
+}
+
+.bg-bubble-3 {
+    width: 260px;
+    height: 260px;
+    background: rgba(2, 62, 138, 0.10);
+    top: 40%;
+    left: 15%;
+    animation-delay: -11s;
+}
+
+@keyframes floatBubble {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        transform: translate(20px, 28px) scale(1.08);
+    }
+}
+
+/* Glassmorphism Premium */
+.glass-panel {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--shadow-soft);
+}
+
+.glass-panel-interactive {
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(14px);
+    border: 1.5px solid rgba(202, 240, 248, 0.9);
+    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.glass-panel-interactive:hover {
+    background: rgba(255, 255, 255, 0.96);
+    border-color: var(--primary-cyan);
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px -8px rgba(0, 119, 182, 0.14);
+}
+
+.mode-card-active {
+    background: #FFFFFF !important;
+    border-color: var(--primary-blue) !important;
+    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.22), 0 12px 28px -8px rgba(0, 119, 182, 0.18) !important;
+}
+
+/* Mascote Dente Flutuante */
+.tooth-mascot {
+    animation: gentleFloat 3.6s ease-in-out infinite;
+    filter: drop-shadow(0 10px 18px rgba(0, 119, 182, 0.22));
+    transition: transform 0.3s ease;
+}
+
+.tooth-mascot:hover {
+    transform: scale(1.06) rotate(-3deg);
+}
+
+@keyframes gentleFloat {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-6px) rotate(2deg);
+    }
+}
+
+/* Stepper de Questões (Bolinhas de evolução) */
+.step-dot {
+    height: 8px;
+    border-radius: 9999px;
+    transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.step-dot-current {
+    width: 28px;
+    background: linear-gradient(90deg, var(--primary-blue), var(--primary-cyan));
+    box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
+}
+
+.step-dot-pending {
+    width: 8px;
+    background-color: #CBD5E1;
+}
+
+.step-dot-correct {
+    width: 12px;
+    background-color: var(--true-mint);
+}
+
+.step-dot-wrong {
+    width: 12px;
+    background-color: var(--false-coral);
+}
+
+/* Card da Pergunta com Borda Gradiente Sutil */
+.statement-card {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F7FBFF 100%);
+    border: 1.5px solid #D8EEFB;
+    box-shadow: inset 0 1px 0 0 #FFFFFF, 0 10px 30px -10px rgba(0, 119, 182, 0.08);
+    position: relative;
+}
+
+/* Badges de Complexidade */
+.badge-easy {
+    background-color: #E6F7F4;
+    color: #16796B;
+    border: 1px solid #B5E8E0;
+}
+
+.badge-medium {
+    background-color: #E0F2FE;
+    color: #0369A1;
+    border: 1px solid #BAE6FD;
+}
+
+.badge-hard {
+    background-color: #F3E8FF;
+    color: #6D28D9;
+    border: 1px solid #DDD6FE;
+}
+
+/* Botões Táteis 3D Verdadeiro e Falso */
+.btn-answer {
+    position: relative;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: translateY(0);
+}
+
+.btn-true {
+    background: linear-gradient(135deg, #2A9D8F 0%, #1E8275 100%);
+    color: #FFFFFF;
+    border-bottom: 4px solid #145E54;
+    box-shadow: 0 12px 24px -6px rgba(42, 157, 143, 0.45);
+}
+
+.btn-true:not(:disabled):hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 32px -6px rgba(42, 157, 143, 0.58);
+    filter: brightness(1.03);
+}
+
+.btn-true:not(:disabled):active {
+    transform: translateY(2px);
+    border-bottom-width: 2px;
+}
+
+.btn-false {
+    background: linear-gradient(135deg, #E76F51 0%, #D45737 100%);
+    color: #FFFFFF;
+    border-bottom: 4px solid #9E3B22;
+    box-shadow: 0 12px 24px -6px rgba(231, 111, 81, 0.45);
+}
+
+.btn-false:not(:disabled):hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 32px -6px rgba(231, 111, 81, 0.58);
+    filter: brightness(1.03);
+}
+
+.btn-false:not(:disabled):active {
+    transform: translateY(2px);
+    border-bottom-width: 2px;
+}
+
+.btn-answer:disabled {
+    cursor: default;
+}
+
+.btn-dimmed {
+    opacity: 0.32;
+    transform: scale(0.96);
+    filter: grayscale(45%);
+}
+
+.btn-selected-winner {
+    box-shadow: 0 0 0 4px rgba(42, 157, 143, 0.35), 0 14px 28px -6px rgba(42, 157, 143, 0.5);
+    transform: scale(1.02);
+}
+
+.btn-selected-loser {
+    box-shadow: 0 0 0 4px rgba(231, 111, 81, 0.35), 0 14px 28px -6px rgba(231, 111, 81, 0.5);
+    transform: scale(1.02);
+}
+
+/* Botão Primário Odontológico */
+.btn-primary-odonto {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-cyan) 100%);
+    color: #FFFFFF;
+    border-bottom: 4px solid var(--primary-deep);
+    box-shadow: 0 12px 26px -6px rgba(0, 119, 182, 0.45);
+    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-primary-odonto:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 34px -6px rgba(0, 119, 182, 0.58);
+    filter: brightness(1.03);
+}
+
+.btn-primary-odonto:active {
+    transform: translateY(1px);
+    border-bottom-width: 2px;
+}
+
+/* Animações de Transição */
+@keyframes fadeInSlideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(16px) scale(0.985);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.animate-fade-slide {
+    animation: fadeInSlideUp 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes celebratePop {
+    0% { transform: scale(0.96); }
+    45% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+.animate-celebrate {
+    animation: celebratePop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes shakeError {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+}
+
+.animate-shake {
+    animation: shakeError 0.45s ease-in-out;
+}
+
+/* Caixas de Feedback Educativo */
+.feedback-correct {
+    background: linear-gradient(135deg, #E8F8F5 0%, #F2FCFA 100%);
+    border: 1.5px solid #A3E4D7;
+    border-left: 6px solid var(--true-mint);
+}
+
+.feedback-wrong {
+    background: linear-gradient(135deg, #FDEDEC 0%, #FFF7F5 100%);
+    border: 1.5px solid #F5B7B1;
+    border-left: 6px solid var(--false-coral);
+}
+
+/* Gráfico Circular na Tela Final */
+.score-ring-circle {
+    transition: stroke-dashoffset 1.3s cubic-bezier(0.22, 1, 0.36, 1);
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+/* Custom Scrollbar para a Revisão Final */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #F1F5F9;
+    border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #94A3B8;
+    border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #64748B;
+}
+
+/* Canvas de Confetes */
+#confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 50;
+}
+
+/* Rodapé Bento & Botões de Redes Sociais */
+.footer-card {
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(202, 240, 248, 0.9);
+    box-shadow: 0 12px 32px -10px rgba(2, 62, 138, 0.07);
+    transition: all 0.3s ease;
+}
+
+.footer-card:hover {
+    background: rgba(255, 255, 255, 0.92);
+    border-color: rgba(0, 180, 216, 0.45);
+    box-shadow: 0 16px 40px -10px rgba(0, 119, 182, 0.12);
+}
+
+.social-btn {
+    background: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.social-btn-github:hover {
+    border-color: #1E2538;
+    background: #1E2538;
+    color: #FFFFFF;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px -6px rgba(30, 37, 56, 0.35);
+}
+
+.social-btn-github:hover .social-icon-box {
+    background: rgba(255, 255, 255, 0.15);
+    color: #FFFFFF;
+}
+
+.social-btn-instagram:hover {
+    border-color: #E1306C;
+    background: linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #F77737 100%);
+    color: #FFFFFF;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px -6px rgba(225, 48, 108, 0.4);
+}
+
+.social-btn-instagram:hover .social-icon-box {
+    background: rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
+}
+
