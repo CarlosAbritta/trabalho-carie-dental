@@ -258,6 +258,8 @@ let currentReviewFilter = "all";
 const dom = {
     // Cabeçalho e Mascote
     mascotFace: document.getElementById("mascot-face"),
+    mascotMoodDot: document.getElementById("mascot-mood-dot"),
+    mascotBtn: document.getElementById("mascot-btn"),
     headerStats: document.getElementById("header-stats"),
     streakBadge: document.getElementById("streak-badge"),
     currentStreak: document.getElementById("current-streak"),
@@ -295,7 +297,9 @@ const dom = {
     feedbackIconWrapper: document.getElementById("feedback-icon-wrapper"),
     feedbackIcon: document.getElementById("feedback-icon"),
     feedbackTitle: document.getElementById("feedback-title"),
+    feedbackTitleMobile: document.getElementById("feedback-title-mobile"),
     correctAnswerPill: document.getElementById("correct-answer-pill"),
+    correctAnswerPillMobile: document.getElementById("correct-answer-pill-mobile"),
     feedbackExplanation: document.getElementById("feedback-explanation"),
     feedbackClinicalTip: document.getElementById("feedback-clinical-tip"),
     btnNext: document.getElementById("btn-next"),
@@ -338,6 +342,7 @@ function setMascotMood(mood) {
             <circle cx="46" cy="29" r="3" fill="#FF9EAA"/>
             <path d="M24.5 29.5C26 35.5 38 35.5 39.5 29.5Z" fill="#1E2538" stroke="#1E2538" stroke-width="2" stroke-linejoin="round"/>
         `;
+        if (dom.mascotMoodDot) dom.mascotMoodDot.textContent = "🎉";
     } else if (mood === "surprised") {
         // Olhinhos arregalados + boquinha de "oh!" educativa
         dom.mascotFace.innerHTML = `
@@ -349,6 +354,7 @@ function setMascotMood(mood) {
             <circle cx="45.5" cy="29.5" r="2.3" fill="#FF9EAA"/>
             <circle cx="32" cy="32" r="3.2" stroke="#E76F51" stroke-width="2.8" fill="none"/>
         `;
+        if (dom.mascotMoodDot) dom.mascotMoodDot.textContent = "😮";
     } else if (mood === "thinking") {
         // Olhar curioso analisando a pergunta
         dom.mascotFace.innerHTML = `
@@ -360,6 +366,7 @@ function setMascotMood(mood) {
             <circle cx="45.5" cy="29.5" r="2.3" fill="#FF9EAA"/>
             <path d="M27.5 31.5C30 33 34 33 36.5 31" stroke="#1E2538" stroke-width="2.8" stroke-linecap="round"/>
         `;
+        if (dom.mascotMoodDot) dom.mascotMoodDot.textContent = "🤔";
     } else {
         // 'happy' padrão acolhedor
         dom.mascotFace.innerHTML = `
@@ -369,6 +376,14 @@ function setMascotMood(mood) {
             <circle cx="45.5" cy="29.5" r="2.5" fill="#FF9EAA"/>
             <path d="M26 30.5C27.5 34.2 36.5 34.2 38 30.5" stroke="#1E2538" stroke-width="3" stroke-linecap="round"/>
         `;
+        if (dom.mascotMoodDot) dom.mascotMoodDot.textContent = "✨";
+    }
+
+    if (dom.mascotMoodDot) {
+        dom.mascotMoodDot.style.transform = "scale(1.25)";
+        setTimeout(() => {
+            if (dom.mascotMoodDot) dom.mascotMoodDot.style.transform = "scale(1)";
+        }, 220);
     }
 }
 
@@ -418,6 +433,9 @@ function showStartScreen() {
     dom.startScreen.classList.remove("hidden", "animate-fade-slide");
     void dom.startScreen.offsetWidth;
     dom.startScreen.classList.add("animate-fade-slide");
+    if (window.innerWidth < 640) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
 }
 
 /**
@@ -452,6 +470,9 @@ function startSelectedQuiz() {
     dom.quizScreen.classList.remove("hidden");
 
     renderQuestion();
+    if (window.innerWidth < 640) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
 }
 
 /**
@@ -512,7 +533,7 @@ function renderQuestion() {
     // Especialidade e Nível de Complexidade
     dom.questionCategory.innerHTML = `<i class="fa-solid fa-tooth"></i> ${currentQ.category}`;
 
-    dom.questionDifficulty.className = "inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-lg ";
+    dom.questionDifficulty.className = "inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1 rounded-lg ";
     if (currentQ.difficulty === "easy") {
         dom.questionDifficulty.classList.add("badge-easy");
         dom.questionDifficulty.innerHTML = `<i class="fa-solid fa-seedling text-[10px]"></i> ${currentQ.difficultyLabel}`;
@@ -527,13 +548,13 @@ function renderQuestion() {
     // Texto da afirmação
     dom.questionText.textContent = `"${currentQ.statement}"`;
 
-    // Restaura botões Verdadeiro e Falso
+    // Restaura botões Verdadeiro e Falso (mantendo responsividade mobile/PC)
     dom.btnTrue.disabled = false;
     dom.btnFalse.disabled = false;
     dom.btnTrue.className =
-        "btn-answer btn-true rounded-2xl py-4 px-6 font-semibold text-base sm:text-lg flex items-center justify-between focus:outline-none focus:ring-4 focus:ring-odonto-mint/40";
+        "btn-answer btn-true rounded-2xl py-3.5 px-3.5 sm:py-4 sm:px-6 font-semibold text-sm sm:text-lg flex items-center justify-center sm:justify-between focus:outline-none focus:ring-4 focus:ring-odonto-mint/40";
     dom.btnFalse.className =
-        "btn-answer btn-false rounded-2xl py-4 px-6 font-semibold text-base sm:text-lg flex items-center justify-between focus:outline-none focus:ring-4 focus:ring-odonto-coral/40";
+        "btn-answer btn-false rounded-2xl py-3.5 px-3.5 sm:py-4 sm:px-6 font-semibold text-sm sm:text-lg flex items-center justify-center sm:justify-between focus:outline-none focus:ring-4 focus:ring-odonto-coral/40";
 
     // Oculta feedback
     dom.feedbackContainer.classList.add("hidden");
@@ -614,20 +635,42 @@ function showEducationalFeedback(isCorrect, questionObj) {
         "text-odonto-coral"
     );
 
+    if (dom.feedbackTitleMobile) {
+        dom.feedbackTitleMobile.classList.remove("text-odonto-mint", "text-odonto-coral");
+    }
+    if (dom.correctAnswerPillMobile) {
+        dom.correctAnswerPillMobile.classList.remove(
+            "bg-odonto-mint/15",
+            "text-odonto-mint",
+            "bg-odonto-coral/15",
+            "text-odonto-coral"
+        );
+    }
+
     if (isCorrect) {
+        const titleText =
+            currentStreak >= 3 ? `Mandou muito bem! (${currentStreak}x 🔥)` : "Excelente! Você acertou!";
         dom.feedbackBox.classList.add("feedback-correct");
         dom.feedbackIconWrapper.classList.add("bg-odonto-mint");
         dom.feedbackIcon.className = "fa-solid fa-check";
-        dom.feedbackTitle.textContent =
-            currentStreak >= 3 ? `Mandou muito bem! (${currentStreak} acertos seguidos 🔥)` : "Excelente! Você acertou!";
+        dom.feedbackTitle.textContent = titleText;
         dom.feedbackTitle.classList.add("text-odonto-mint");
         dom.correctAnswerPill.classList.add("bg-odonto-mint/15", "text-odonto-mint");
+
+        if (dom.feedbackTitleMobile) {
+            dom.feedbackTitleMobile.textContent = titleText;
+            dom.feedbackTitleMobile.classList.add("text-odonto-mint");
+        }
+        if (dom.correctAnswerPillMobile) {
+            dom.correctAnswerPillMobile.classList.add("bg-odonto-mint/15", "text-odonto-mint");
+        }
 
         dom.questionCard.classList.remove("animate-fade-slide");
         void dom.questionCard.offsetWidth;
         dom.questionCard.classList.add("animate-celebrate");
         launchConfetti(30);
     } else {
+        const titleText = "Pegadinha clínica! Veja o motivo:";
         dom.feedbackBox.classList.add("feedback-wrong");
         dom.feedbackIconWrapper.classList.add("bg-odonto-coral");
         dom.feedbackIcon.className = "fa-solid fa-lightbulb";
@@ -635,12 +678,23 @@ function showEducationalFeedback(isCorrect, questionObj) {
         dom.feedbackTitle.classList.add("text-odonto-coral");
         dom.correctAnswerPill.classList.add("bg-odonto-coral/15", "text-odonto-coral");
 
+        if (dom.feedbackTitleMobile) {
+            dom.feedbackTitleMobile.textContent = titleText;
+            dom.feedbackTitleMobile.classList.add("text-odonto-coral");
+        }
+        if (dom.correctAnswerPillMobile) {
+            dom.correctAnswerPillMobile.classList.add("bg-odonto-coral/15", "text-odonto-coral");
+        }
+
         dom.questionCard.classList.remove("animate-fade-slide");
         void dom.questionCard.offsetWidth;
         dom.questionCard.classList.add("animate-shake");
     }
 
     dom.correctAnswerPill.textContent = `Gabarito: ${answerLabel}`;
+    if (dom.correctAnswerPillMobile) {
+        dom.correctAnswerPillMobile.textContent = `Gabarito: ${answerLabel}`;
+    }
     dom.feedbackExplanation.textContent = questionObj.explanation;
     dom.feedbackClinicalTip.textContent = questionObj.clinicalTip;
 
@@ -668,8 +722,14 @@ function nextQuestion() {
 
     if (currentQuestionIndex < activeQuestions.length) {
         renderQuestion();
+        if (window.innerWidth < 640) {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
     } else {
         showResultsScreen();
+        if (window.innerWidth < 640) {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
     }
 }
 
